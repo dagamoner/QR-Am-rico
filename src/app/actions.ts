@@ -1,6 +1,6 @@
 'use server';
 
-import supabase from '@/lib/db';
+import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 
@@ -13,89 +13,95 @@ export type Guest = {
   created_at: string;
 };
 
-export async function getGuests(): Promise<Guest[]> {
-  const { data, error } = await supabase
-    .from('guests')
-    .select('*')
-    .order('created_at', { ascending: false });
+// Función interna para asegurar que la tabla exista (se ejecuta automáticamente al buscar invitados)
+async function ensureTableExists() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS guests (
+      id VARCHAR(255) PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      payment_status VARCHAR(50) NOT NULL DEFAULT 'pending',
+      used_status INTEGER NOT NULL DEFAULT 0,
+      guests_count INTEGER NOT NULL DEFAULT 1,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+}
 
-  if (error) {
+export async function getGuests(): Promise<Guest[]> {
+  try {
+    await ensureTableExists();
+    const { rows } = await sql`SELECT * FROM guests ORDER BY created_at DESC`;
+    return rows as Guest[];
+  } catch (error) {
     console.error('Error fetching guests:', error);
     return [];
   }
-  return data as Guest[];
 }
 
 export async function addGuest(name: string, guestsCount: number = 1) {
-  const id = crypto.randomUUID().substring(0, 8); // Short ID for simpler QR
-  const { error } = await supabase
-    .from('guests')
-    .insert([{ id, name, payment_status: 'pending', used_status: 0, guests_count: guestsCount }]);
-
-  if (error) console.error('Error adding guest:', error);
-  revalidatePath('/admin');
-  return id;
+  try {
+    const id = crypto.randomUUID().substring(0, 8); // Short ID for simpler QR
+    await sql`
+      INSERT INTO guests (id, name, payment_status, used_status, guests_count)
+      VALUES (${id}, ${name}, 'pending', 0, ${guestsCount})
+    `;
+    revalidatePath('/admin');
+    return id;
+  } catch (error) {
+    console.error('Error adding guest:', error);
+  }
 }
 
 export async function markAsPaid(id: string) {
-  const { error } = await supabase
-    .from('guests')
-    .update({ payment_status: 'paid' })
-    .eq('id', id);
-
-  if (error) console.error('Error marking as paid:', error);
-  revalidatePath('/admin');
+  try {
+    await sql`UPDATE guests SET payment_status = 'paid' WHERE id = ${id}`;
+    revalidatePath('/admin');
+  } catch (error) {
+    console.error('Error marking as paid:', error);
+  }
 }
 
 export async function deleteGuest(id: string) {
-  const { error } = await supabase
-    .from('guests')
-    .delete()
-    .eq('id', id);
-
-  if (error) console.error('Error deleting guest:', error);
-  revalidatePath('/admin');
+  try {
+    await sql`DELETE FROM guests WHERE id = ${id}`;
+    revalidatePath('/admin');
+  } catch (error) {
+    console.error('Error deleting guest:', error);
+  }
 }
 
 export async function verifyGuestAndMarkUsed(id: string) {
-  const { data: guest, error } = await supabase
-    .from('guests')
-    .select('*')
-    .eq('id', id)
-    .single();
+  try {
+    const { rows } = await sql`SELECT * FROM guests WHERE id = ${id} LIMIT 1`;
+    const guest = rows[0] as Guest | undefined;
 
-  if (error || !guest) {
-    return { success: false, message: 'Entrada no encontrada' };
+    if (!guest) {
+      return { success: false, message: 'Entrada no encontrada' };
+    }
+
+    if (guest.payment_status !== 'paid') {
+      return { success: false, message: 'Pago pendiente', guest };
+    }
+
+    if (guest.used_status === 1) {
+      return { success: false, message: 'Entrada ya fue usada', guest };
+    }
+
+    // Mark as used
+    await sql`UPDATE guests SET used_status = 1 WHERE id = ${id}`;
+    return { success: true, message: 'Acceso permitido', guest };
+  } catch (error) {
+    console.error('Error verifying guest:', error);
+    return { success: false, message: 'Error interno de validación' };
   }
-
-  if (guest.payment_status !== 'paid') {
-    return { success: false, message: 'Pago pendiente', guest };
-  }
-
-  if (guest.used_status === 1) {
-    return { success: false, message: 'Entrada ya fue usada', guest };
-  }
-
-  // Mark as used
-  const { error: updateError } = await supabase
-    .from('guests')
-    .update({ used_status: 1 })
-    .eq('id', id);
-
-  if (updateError) {
-    return { success: false, message: 'Error actualizando entrada', guest };
-  }
-
-  return { success: true, message: 'Acceso permitido', guest };
 }
 
 export async function getGuestById(id: string) {
-  const { data: guest, error } = await supabase
-    .from('guests')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error) return undefined;
-  return guest as Guest;
+  try {
+    const { rows } = await sql`SELECT * FROM guests WHERE id = ${id} LIMIT 1`;
+    return rows[0] as Guest | undefined;
+  } catch (error) {
+    console.error('Error fetching guest by id:', error);
+    return undefined;
+  }
 }
