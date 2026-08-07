@@ -1,6 +1,7 @@
 import { getGuests, addGuest, markAsPaid, deleteGuest } from '@/app/actions';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
 import DownloadCsvButton from '@/components/DownloadCsvButton';
+import DownloadPdfButton from '@/components/DownloadPdfButton';
 
 export default async function AdminPage() {
   const guests = await getGuests();
@@ -39,9 +40,12 @@ export default async function AdminPage() {
       </div>
 
       <div className="bg-white shadow rounded-lg p-6 border">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
           <h2 className="text-xl font-semibold">Lista de Invitados ({guests.length})</h2>
-          <DownloadCsvButton guests={guests} />
+          <div className="flex gap-2">
+            <DownloadPdfButton guests={guests} />
+            <DownloadCsvButton guests={guests} />
+          </div>
         </div>
         
         <div className="space-y-6">
