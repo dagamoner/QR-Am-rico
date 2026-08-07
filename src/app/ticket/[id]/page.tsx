@@ -1,6 +1,8 @@
 import { getGuestById } from '@/app/actions';
 import { notFound } from 'next/navigation';
 
+import QRCodeDisplay from '@/components/QRCodeDisplay';
+
 export default async function TicketPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const id = params.id;
@@ -110,16 +112,23 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
                 Pagar con Mercado Pago
               </a>
 
-              <p className="text-xs text-gray-400 mt-4 leading-relaxed">
-                Una vez realizada la transferencia, aguardá a que validemos tu pago. Esta pantalla se pondrá verde y te servirá de entrada.
-              </p>
+              <div className="text-sm text-gray-300 mt-4 leading-relaxed bg-black/30 p-3 rounded border border-gray-800">
+                <p className="font-bold text-yellow-500 mb-1">⚠️ IMPORTANTE</p>
+                <p>Una vez realizada la transferencia, <strong>enviá el comprobante de pago al contacto de Raúl Beyer</strong> para que podamos cargar tu pago y no tengas problemas al ingreso.</p>
+                <p className="mt-2 text-xs text-gray-400">Cuando validemos tu pago, esta pantalla mostrará tu código QR de acceso.</p>
+              </div>
             </div>
           )}
 
           {guest.payment_status === 'paid' && (
-            <div className="bg-green-900/20 border border-green-500/50 rounded-lg p-5 mb-6 text-center">
-               <h3 className="font-bold text-green-400 text-lg">¡Todo listo!</h3>
-               <p className="text-sm text-gray-300 mt-2">Presentá esta misma pantalla en la entrada el día del evento.</p>
+            <div className="bg-green-900/20 border border-green-500/50 rounded-lg p-5 mb-6 text-center flex flex-col items-center">
+               <h3 className="font-bold text-green-400 text-lg mb-4">¡Todo listo!</h3>
+               <div className="bg-white p-2 rounded-lg inline-block mb-4">
+                 <QRCodeDisplay text={guest.id} filename={guest.name} />
+               </div>
+               <p className="text-sm text-gray-300">
+                 Deberás <strong>mostrar este código QR</strong> en la puerta para poder ingresar. ¡Te esperamos!
+               </p>
             </div>
           )}
 
