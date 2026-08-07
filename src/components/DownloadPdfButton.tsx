@@ -7,80 +7,83 @@ import autoTable from 'jspdf-autotable';
 export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
   const downloadPdf = () => {
     const doc = new jsPDF();
+    const TICKET_PRICE = 55000;
+
+    const generateTableAndTotals = (startY: number) => {
+      const sortedGuests = [...guests].sort((a, b) => a.name.localeCompare(b.name));
+
+      // Table Data
+      const headers = [['Nombre', 'Cant.', 'Estado Pago', 'Uso', 'Pagado', 'Debe']];
+      const data = sortedGuests.map(g => {
+        const total = g.guests_count * TICKET_PRICE;
+        const isPaid = g.payment_status === 'paid';
+        const pagado = isPaid ? total : 0;
+        const debe = isPaid ? 0 : total;
+
+        return [
+          g.name,
+          g.guests_count,
+          isPaid ? 'Pagado' : 'Pendiente',
+          g.used_status === 1 ? 'Ya ingresó' : 'No usada',
+          `$${pagado.toLocaleString('es-AR')}`,
+          `$${debe.toLocaleString('es-AR')}`
+        ];
+      });
+
+      // Draw table
+      autoTable(doc, {
+        head: headers,
+        body: data,
+        startY: startY,
+        theme: 'striped',
+        headStyles: { fillColor: [0, 0, 0] },
+        styles: { fontSize: 9 }
+      });
+
+      // Calculate totals
+      const totalGuests = sortedGuests.reduce((acc, g) => acc + g.guests_count, 0);
+      const totalPaidTickets = sortedGuests.filter(g => g.payment_status === 'paid').reduce((acc, g) => acc + g.guests_count, 0);
+      const totalFacturado = totalGuests * TICKET_PRICE;
+      const totalCobrado = totalPaidTickets * TICKET_PRICE;
+      const totalDebe = totalFacturado - totalCobrado;
+      
+      const finalY = (doc as any).lastAutoTable.finalY + 10;
+      doc.setFontSize(11);
+      
+      // Entradas
+      doc.text(`Total Entradas Emitidas: ${totalGuests}`, 14, finalY);
+      doc.text(`Total Entradas Pagadas: ${totalPaidTickets}`, 14, finalY + 7);
+      doc.text(`Entradas Pendientes: ${totalGuests - totalPaidTickets}`, 14, finalY + 14);
+
+      // Dinero
+      doc.text(`Total Emitido: $${totalFacturado.toLocaleString('es-AR')}`, 120, finalY);
+      doc.text(`Total Cobrado: $${totalCobrado.toLocaleString('es-AR')}`, 120, finalY + 7);
+      doc.text(`Falta Cobrar: $${totalDebe.toLocaleString('es-AR')}`, 120, finalY + 14);
+
+      doc.save('informe_invitados_americo.pdf');
+    };
 
     // Add Logo (from public folder)
     const img = new Image();
     img.src = '/logo.png';
     
     img.onload = () => {
-      // Calculate image dimensions (center it)
       const imgWidth = 30;
       const imgHeight = (img.height * imgWidth) / img.width;
       const xOffset = (doc.internal.pageSize.width / 2) - (imgWidth / 2);
       
       doc.addImage(img, 'PNG', xOffset, 10, imgWidth, imgHeight);
-
-      // Title
       doc.setFontSize(16);
-      doc.text('Lista de Invitados - Américo Gallardo', doc.internal.pageSize.width / 2, 10 + imgHeight + 10, { align: 'center' });
+      doc.text('Informe de Invitados - Américo Gallardo', doc.internal.pageSize.width / 2, 10 + imgHeight + 10, { align: 'center' });
 
-      // Sort guests alphabetically by name
-      const sortedGuests = [...guests].sort((a, b) => a.name.localeCompare(b.name));
-
-      // Table Data
-      const headers = [['Nombre', 'Cantidad', 'Estado Pago', 'Uso']];
-      const data = sortedGuests.map(g => [
-        g.name,
-        g.guests_count,
-        g.payment_status === 'paid' ? 'Pagado' : 'Pendiente',
-        g.used_status === 1 ? 'Ya ingresó' : 'No usada'
-      ]);
-
-      // Draw table
-      autoTable(doc, {
-        head: headers,
-        body: data,
-        startY: 10 + imgHeight + 20,
-        theme: 'striped',
-        headStyles: { fillColor: [0, 0, 0] }, // Black header
-        styles: { fontSize: 10 }
-      });
-
-      // Total count
-      const totalGuests = sortedGuests.reduce((acc, g) => acc + g.guests_count, 0);
-      const totalPaid = sortedGuests.filter(g => g.payment_status === 'paid').reduce((acc, g) => acc + g.guests_count, 0);
-      
-      const finalY = (doc as any).lastAutoTable.finalY + 10;
-      doc.setFontSize(12);
-      doc.text(`Total Entradas: ${totalGuests}`, 14, finalY);
-      doc.text(`Total Entradas Pagadas: ${totalPaid}`, 14, finalY + 7);
-
-      doc.save('invitados_americo.pdf');
+      generateTableAndTotals(10 + imgHeight + 20);
     };
 
-    // If image fails to load (e.g. adblocker), just draw table without it
     img.onerror = () => {
       doc.setFontSize(16);
-      doc.text('Lista de Invitados - Américo Gallardo', doc.internal.pageSize.width / 2, 20, { align: 'center' });
+      doc.text('Informe de Invitados - Américo Gallardo', doc.internal.pageSize.width / 2, 20, { align: 'center' });
       
-      const sortedGuests = [...guests].sort((a, b) => a.name.localeCompare(b.name));
-      const headers = [['Nombre', 'Cantidad', 'Estado Pago', 'Uso']];
-      const data = sortedGuests.map(g => [
-        g.name,
-        g.guests_count,
-        g.payment_status === 'paid' ? 'Pagado' : 'Pendiente',
-        g.used_status === 1 ? 'Ya ingresó' : 'No usada'
-      ]);
-
-      autoTable(doc, {
-        head: headers,
-        body: data,
-        startY: 30,
-        theme: 'striped',
-        headStyles: { fillColor: [0, 0, 0] },
-      });
-
-      doc.save('invitados_americo.pdf');
+      generateTableAndTotals(30);
     };
   };
 
