@@ -2,12 +2,14 @@ import { getGuests, addGuest, markAsPaid, deleteGuest } from '@/app/actions';
 import DownloadCsvButton from '@/components/DownloadCsvButton';
 import DownloadPdfButton from '@/components/DownloadPdfButton';
 import WhatsAppNotifyButton from '@/components/WhatsAppNotifyButton';
+import AutoRefresher from '@/components/AutoRefresher';
 
 export default async function AdminPage() {
   const guests = await getGuests();
 
   return (
     <div className="max-w-4xl mx-auto p-6 font-sans">
+      <AutoRefresher intervalMs={15000} />
       <h1 className="text-3xl font-bold mb-8">Administración de Entradas</h1>
 
       <div className="bg-white shadow rounded-lg p-6 mb-8 border">
