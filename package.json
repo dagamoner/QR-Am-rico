@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
     "@vercel/postgres": "^0.10.0",
     "@yudiel/react-qr-scanner": "^2.6.0",
     "jspdf": "^4.2.1",
