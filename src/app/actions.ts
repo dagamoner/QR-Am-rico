@@ -11,6 +11,7 @@ export type Guest = {
   used_status: number;
   guests_count: number;
   created_at: string;
+  paid_at?: string;
 };
 
 // Función interna para asegurar que la tabla exista (se ejecuta automáticamente al buscar invitados)
@@ -25,6 +26,8 @@ async function ensureTableExists() {
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
   `;
+  // Add paid_at column if it doesn't exist
+  await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS paid_at TIMESTAMP WITH TIME ZONE;`;
 }
 
 export async function getGuests(): Promise<Guest[]> {
@@ -54,7 +57,7 @@ export async function addGuest(name: string, guestsCount: number = 1) {
 
 export async function markAsPaid(id: string) {
   try {
-    await sql`UPDATE guests SET payment_status = 'paid' WHERE id = ${id}`;
+    await sql`UPDATE guests SET payment_status = 'paid', paid_at = CURRENT_TIMESTAMP WHERE id = ${id}`;
     revalidatePath('/admin');
   } catch (error) {
     console.error('Error marking as paid:', error);

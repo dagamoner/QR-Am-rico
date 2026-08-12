@@ -12,8 +12,17 @@ export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
     const generateTableAndTotals = (startY: number) => {
       const sortedGuests = [...guests].sort((a, b) => a.name.localeCompare(b.name));
 
+      const formatDate = (dateString?: string) => {
+        if (!dateString) return '-';
+        const d = new Date(dateString);
+        return d.toLocaleString('es-AR', {
+          day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        }) + ' hs';
+      };
+
       // Table Data
-      const headers = [['Nombre', 'Cant.', 'Estado Pago', 'Uso', 'Pagado', 'Debe']];
+      const headers = [['Nombre', 'Generado', 'Pagado el', 'Cant.', 'Estado', 'Debe', 'Pagado']];
       const data = sortedGuests.map(g => {
         const total = g.guests_count * TICKET_PRICE;
         const isPaid = g.payment_status === 'paid';
@@ -22,11 +31,12 @@ export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
 
         return [
           g.name,
+          formatDate(g.created_at),
+          formatDate(g.paid_at),
           g.guests_count,
           isPaid ? 'Pagado' : 'Pendiente',
-          g.used_status === 1 ? 'Ya ingresó' : 'No usada',
-          `$${pagado.toLocaleString('es-AR')}`,
-          `$${debe.toLocaleString('es-AR')}`
+          `$${debe.toLocaleString('es-AR')}`,
+          `$${pagado.toLocaleString('es-AR')}`
         ];
       });
 
