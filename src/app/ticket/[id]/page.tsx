@@ -101,7 +101,14 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
               <div className="text-sm text-gray-300 mt-4 leading-relaxed bg-black/30 p-3 rounded border border-gray-800">
                 <p className="font-bold text-yellow-500 mb-1">⚠️ IMPORTANTE</p>
                 <p>Transferí el total a ese Alias y <strong>enviá el comprobante de pago al contacto de Raúl Beyer (2615 33-9837)</strong> para que podamos cargar tu pago y asegurar tu lugar.</p>
-                <p className="mt-2 text-xs text-gray-400">Cuando validemos tu pago te llegará un mensaje a este mismo link.</p>
+                
+                <div className="mt-4 border-t border-gray-700/50 pt-3">
+                  <p className="text-xs text-gray-400 mb-1">Cuando validemos tu pago te llegará un mensaje a este mismo link:</p>
+                  <div className="bg-black/50 p-2 rounded text-xs text-blue-400 break-all select-all border border-gray-700 font-mono">
+                    https://qr-am-rico.vercel.app/ticket/{id}
+                  </div>
+                  <p className="mt-1 text-[10px] text-gray-500 italic uppercase">⚠️ Copiá y guardá este link para poder revisar tu entrada más tarde.</p>
+                </div>
               </div>
             </div>
           )}
