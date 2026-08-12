@@ -84,7 +84,7 @@ export default function Home() {
               const name = formData.get('name') as string;
               const count = parseInt(formData.get('count') as string) || 1;
               const phone = formData.get('phone') as string || '';
-              if (name) {
+              if (name && phone) {
                 const id = await addGuest(name, count, phone);
                 if (id) {
                   redirect(`/ticket/${id}`);

@@ -19,7 +19,7 @@ export default async function AdminPage() {
           const name = formData.get('name') as string;
           const count = parseInt(formData.get('count') as string) || 1;
           const phone = formData.get('phone') as string || '';
-          if (name) await addGuest(name, count, phone);
+          if (name && phone) await addGuest(name, count, phone);
         }} className="flex flex-col md:flex-row gap-4">
           <input
             type="text"
@@ -32,6 +32,7 @@ export default async function AdminPage() {
             type="tel"
             name="phone"
             placeholder="Celular (ej: 261...)"
+            required
             className="border p-2 rounded flex-1"
           />
           <input
@@ -39,6 +40,7 @@ export default async function AdminPage() {
             name="count"
             defaultValue="1"
             min="1"
+            required
             placeholder="Cant. Entradas"
             className="border p-2 rounded w-32"
           />
