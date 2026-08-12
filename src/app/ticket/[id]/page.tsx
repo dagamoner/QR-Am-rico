@@ -20,7 +20,7 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
         
         {/* Header / Banner */}
         <div className="bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] p-8 text-center border-b border-yellow-700/50 flex flex-col items-center">
-          <img src="/logo.png" alt="Escudo Américo Gallardo" className="w-24 h-auto mb-4 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]" />
+          <img src="/logo.png" alt="Escudo Américo Gallardo" className="w-40 h-auto mb-4 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]" />
           <h1 className="text-4xl font-bold uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 mb-2 font-serif">
             20 Años
           </h1>
