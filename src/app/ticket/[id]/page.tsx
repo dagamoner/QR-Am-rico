@@ -100,8 +100,8 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
 
               <div className="text-sm text-gray-300 mt-4 leading-relaxed bg-black/30 p-3 rounded border border-gray-800">
                 <p className="font-bold text-yellow-500 mb-1">⚠️ IMPORTANTE</p>
-                <p>Transferí el total a ese Alias y <strong>enviá el comprobante de pago al contacto de Raúl Beyer</strong> para que podamos cargar tu pago y asegurar tu lugar.</p>
-                <p className="mt-2 text-xs text-gray-400">Cuando validemos tu pago, esta pantalla mostrará tu código QR de acceso.</p>
+                <p>Transferí el total a ese Alias y <strong>enviá el comprobante de pago al contacto de Raúl Beyer (2615 33-9837)</strong> para que podamos cargar tu pago y asegurar tu lugar.</p>
+                <p className="mt-2 text-xs text-gray-400">Cuando validemos tu pago te llegará un mensaje a este mismo link.</p>
               </div>
             </div>
           )}
