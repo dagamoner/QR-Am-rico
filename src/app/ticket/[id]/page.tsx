@@ -1,8 +1,6 @@
 import { getGuestById } from '@/app/actions';
 import { notFound } from 'next/navigation';
 
-import QRCodeDisplay from '@/components/QRCodeDisplay';
-
 export default async function TicketPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const id = params.id;
@@ -110,12 +108,12 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
 
           {guest.payment_status === 'paid' && (
             <div className="bg-green-900/20 border border-green-500/50 rounded-lg p-5 mb-6 text-center flex flex-col items-center">
-               <h3 className="font-bold text-green-400 text-lg mb-4">¡Todo listo!</h3>
-               <div className="bg-white p-2 rounded-lg inline-block mb-4">
-                 <QRCodeDisplay text={guest.id} filename={guest.name} />
-               </div>
-               <p className="text-sm text-gray-300">
-                 Deberás <strong>mostrar este código QR</strong> en la puerta para poder ingresar. ¡Te esperamos!
+               <h3 className="font-bold text-green-400 text-xl mb-2">🎉 ¡Pago Confirmado!</h3>
+               <p className="text-gray-200 font-medium">
+                 Tu pago ha sido validado correctamente y tus entradas ya están aseguradas.
+               </p>
+               <p className="text-sm text-gray-400 mt-4">
+                 El día del evento, simplemente presentate en la puerta y da tu nombre <strong>({guest.name})</strong> para poder ingresar. ¡Te esperamos!
                </p>
             </div>
           )}
