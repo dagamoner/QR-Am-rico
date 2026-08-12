@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { addGuest } from '@/app/actions';
 import { redirect } from 'next/navigation';
 
@@ -122,13 +121,6 @@ export default function Home() {
           </div>
 
         </div>
-      </div>
-
-      {/* Hidden Admin Link in Footer */}
-      <div className="mt-8 text-center">
-        <Link href="/admin" className="text-gray-800 hover:text-gray-500 text-xs transition">
-          🔒 Acceso Organización
-        </Link>
       </div>
     </div>
   );
