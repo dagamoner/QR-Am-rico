@@ -119,9 +119,18 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
                <p className="text-gray-200 font-medium">
                  Tu pago ha sido validado correctamente y tus entradas ya están aseguradas.
                </p>
-               <p className="text-sm text-gray-400 mt-4">
+               <p className="text-sm text-gray-400 mt-4 mb-4">
                  El día del evento, simplemente presentate en la puerta y da tu nombre <strong>({guest.name})</strong> para poder ingresar. ¡Te esperamos!
                </p>
+               
+               <a 
+                 href={`https://wa.me/?text=¡Ya tengo mi entrada para los 20 Años de Américo Gallardo!%0A%0A👤 Nombre: ${encodeURIComponent(guest.name)}%0A🎟️ Entradas: ${guest.guest_count}%0A✅ Estado: PAGADO%0A%0AMirá mi ticket acá: https://qr-am-rico.vercel.app/ticket/${guest.id}`}
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 className="flex items-center gap-2 bg-[#25D366] hover:bg-[#20b858] text-white py-2 px-4 rounded-lg font-bold transition shadow-lg text-sm"
+               >
+                 <span>📱 Guardar / Compartir por WhatsApp</span>
+               </a>
             </div>
           )}
 
