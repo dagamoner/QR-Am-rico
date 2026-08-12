@@ -1,5 +1,4 @@
 import { getGuests, addGuest, markAsPaid, deleteGuest } from '@/app/actions';
-import QRCodeDisplay from '@/components/QRCodeDisplay';
 import DownloadCsvButton from '@/components/DownloadCsvButton';
 import DownloadPdfButton from '@/components/DownloadPdfButton';
 
@@ -88,12 +87,6 @@ export default async function AdminPage() {
                     Eliminar
                   </button>
                 </form>
-              </div>
-
-              <div className="hidden md:block w-px h-24 bg-gray-300 mx-4"></div>
-
-              <div className="flex-shrink-0">
-                <QRCodeDisplay text={guest.id} filename={guest.name} />
               </div>
             </div>
           ))}
