@@ -12,6 +12,7 @@ export type Guest = {
   guests_count: number;
   created_at: string;
   paid_at?: string;
+  phone?: string;
 };
 
 // Función interna para asegurar que la tabla exista (se ejecuta automáticamente al buscar invitados)
@@ -28,6 +29,8 @@ async function ensureTableExists() {
   `;
   // Add paid_at column if it doesn't exist
   await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS paid_at TIMESTAMP WITH TIME ZONE;`;
+  // Add phone column if it doesn't exist
+  await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS phone VARCHAR(50);`;
 }
 
 export async function getGuests(): Promise<Guest[]> {
@@ -41,12 +44,12 @@ export async function getGuests(): Promise<Guest[]> {
   }
 }
 
-export async function addGuest(name: string, guestsCount: number = 1) {
+export async function addGuest(name: string, guestsCount: number = 1, phone: string = '') {
   try {
     const id = crypto.randomUUID().substring(0, 8); // Short ID for simpler QR
     await sql`
-      INSERT INTO guests (id, name, payment_status, used_status, guests_count)
-      VALUES (${id}, ${name}, 'pending', 0, ${guestsCount})
+      INSERT INTO guests (id, name, payment_status, used_status, guests_count, phone)
+      VALUES (${id}, ${name}, 'pending', 0, ${guestsCount}, ${phone})
     `;
     revalidatePath('/admin');
     return id;

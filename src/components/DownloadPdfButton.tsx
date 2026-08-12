@@ -21,7 +21,7 @@ export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
       };
 
       // Table Data
-      const headers = [['Nombre', 'Generado', 'Pagado el', 'Cant.', 'Estado', 'Debe', 'Pagado']];
+      const headers = [['Nombre', 'Celular', 'Generado', 'Pagado el', 'Cant.', 'Estado', 'Debe', 'Pagado']];
       const data = sortedGuests.map(g => {
         const total = g.guests_count * TICKET_PRICE;
         const isPaid = g.payment_status === 'paid';
@@ -30,6 +30,7 @@ export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
 
         return [
           g.name,
+          g.phone || '-',
           formatDate(g.created_at),
           formatDate(g.paid_at),
           g.guests_count,

@@ -12,10 +12,11 @@ export default function DownloadCsvButton({ guests }: { guests: Guest[] }) {
       });
     };
 
-    const headers = ['ID', 'Nombre', 'Estado Pago', 'Uso', 'Cantidad Entradas', 'Fecha Generacion', 'Fecha Pago'];
+    const headers = ['ID', 'Nombre', 'Celular', 'Estado Pago', 'Uso', 'Cantidad Entradas', 'Fecha Generacion', 'Fecha Pago'];
     const rows = guests.map(g => [
       g.id,
       `"${g.name}"`, // Quote name to avoid issues with commas
+      `"${g.phone || '-'}"`,
       g.payment_status === 'paid' ? 'Pagado' : 'Pendiente',
       g.used_status === 1 ? 'Ya ingresó' : 'No usada',
       g.guests_count,

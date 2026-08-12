@@ -1,6 +1,7 @@
 import { getGuests, addGuest, markAsPaid, deleteGuest } from '@/app/actions';
 import DownloadCsvButton from '@/components/DownloadCsvButton';
 import DownloadPdfButton from '@/components/DownloadPdfButton';
+import WhatsAppNotifyButton from '@/components/WhatsAppNotifyButton';
 
 export default async function AdminPage() {
   const guests = await getGuests();
@@ -15,13 +16,20 @@ export default async function AdminPage() {
           'use server';
           const name = formData.get('name') as string;
           const count = parseInt(formData.get('count') as string) || 1;
-          if (name) await addGuest(name, count);
+          const phone = formData.get('phone') as string || '';
+          if (name) await addGuest(name, count, phone);
         }} className="flex flex-col md:flex-row gap-4">
           <input
             type="text"
             name="name"
             placeholder="Nombre completo"
             required
+            className="border p-2 rounded flex-1"
+          />
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Celular (ej: 261...)"
             className="border p-2 rounded flex-1"
           />
           <input
@@ -53,6 +61,7 @@ export default async function AdminPage() {
               <div className="flex-1">
                 <p className="font-bold text-lg">{guest.name}</p>
                 <p className="text-sm text-gray-500">ID: {guest.id} • Entradas: {guest.guests_count}</p>
+                {guest.phone && <p className="text-sm font-medium text-green-700">📱 {guest.phone}</p>}
                 <p className="mt-2">
                   Pago: 
                   <span className={`ml-2 px-2 py-1 rounded text-xs font-bold ${guest.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
@@ -69,14 +78,12 @@ export default async function AdminPage() {
 
               <div className="flex flex-col gap-2">
                 {guest.payment_status === 'pending' && (
-                  <form action={async () => {
-                    'use server';
-                    await markAsPaid(guest.id);
-                  }}>
-                    <button type="submit" className="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-medium text-sm transition">
-                      Marcar Pagado
-                    </button>
-                  </form>
+                  <WhatsAppNotifyButton 
+                    id={guest.id} 
+                    name={guest.name} 
+                    phone={guest.phone || ''}
+                    ticketUrl={`https://qr-am-rico.vercel.app/ticket/${guest.id}`} 
+                  />
                 )}
                 
                 <form action={async () => {

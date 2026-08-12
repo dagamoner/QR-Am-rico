@@ -83,8 +83,9 @@ export default function Home() {
               'use server';
               const name = formData.get('name') as string;
               const count = parseInt(formData.get('count') as string) || 1;
+              const phone = formData.get('phone') as string || '';
               if (name) {
-                const id = await addGuest(name, count);
+                const id = await addGuest(name, count, phone);
                 if (id) {
                   redirect(`/ticket/${id}`);
                 }
@@ -96,6 +97,17 @@ export default function Home() {
                   type="text"
                   name="name"
                   placeholder="Ej: Juan Pérez"
+                  required
+                  className="w-full bg-[#222] border border-gray-700 text-white p-3 rounded-lg focus:outline-none focus:border-yellow-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Número de Celular (WhatsApp)</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Ej: 2611234567"
                   required
                   className="w-full bg-[#222] border border-gray-700 text-white p-3 rounded-lg focus:outline-none focus:border-yellow-500 transition"
                 />
