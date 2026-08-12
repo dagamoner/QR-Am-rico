@@ -124,7 +124,7 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
                </p>
                
                <a 
-                 href={`https://wa.me/?text=¡Ya tengo mi entrada para los 20 Años de Américo Gallardo!%0A%0A👤 Nombre: ${encodeURIComponent(guest.name)}%0A🎟️ Entradas: ${guest.guest_count}%0A✅ Estado: PAGADO%0A%0AMirá mi ticket acá: https://qr-am-rico.vercel.app/ticket/${guest.id}`}
+                 href={`https://wa.me/?text=¡Ya tengo mi entrada para los 20 Años de Américo Gallardo!%0A%0A👤 Nombre: ${encodeURIComponent(guest.name)}%0A🎟️ Entradas: ${guest.guests_count}%0A✅ Estado: PAGADO%0A%0AMirá mi ticket acá: https://qr-am-rico.vercel.app/ticket/${guest.id}`}
                  target="_blank"
                  rel="noopener noreferrer"
                  className="flex items-center gap-2 bg-[#25D366] hover:bg-[#20b858] text-white py-2 px-4 rounded-lg font-bold transition shadow-lg text-sm"
