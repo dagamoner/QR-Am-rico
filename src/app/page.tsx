@@ -68,6 +68,15 @@ export default function Home() {
             </div>
           </div>
 
+          <a 
+            href={calendarLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full text-center bg-transparent border border-yellow-600 hover:bg-yellow-600/10 text-yellow-500 py-3 rounded-xl font-bold transition mb-6"
+          >
+            🗓️ Agendar en Google Calendar
+          </a>
+
           <div className="mt-auto border-t border-yellow-700/30 pt-6">
             <h3 className="text-center font-bold text-yellow-500 mb-4 uppercase tracking-wider text-sm">Reservá tu lugar</h3>
             

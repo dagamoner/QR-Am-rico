@@ -13,9 +13,6 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
   }
 
   const calendarLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=20+Años+Américo+Gallardo&dates=20260926T210000/20260927T040000&details=Celebración+20+Años+Américo+Gallardo.+Elegante+Sport.&location=GARDEN%27S+EVENTOS+Tropero+Sosa+1052%2C+Maip%C3%BA`;
-  
-  // Reemplazar con el link real de MP
-  const mercadoPagoLink = `https://link.mercadopago.com.ar/americogallardo`; 
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 font-sans text-gray-200"
@@ -102,19 +99,10 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
               <div className="bg-[#222] p-3 rounded-lg border border-gray-700 text-lg font-mono font-bold tracking-wider mb-4 text-white cursor-auto select-all shadow-inner">
                 Americo.gallardo
               </div>
-              
-              <a 
-                href={mercadoPagoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center bg-[#009EE3] hover:bg-[#008Ccf] text-white py-3 rounded-lg font-bold transition shadow-md mb-3"
-              >
-                Pagar con Mercado Pago
-              </a>
 
               <div className="text-sm text-gray-300 mt-4 leading-relaxed bg-black/30 p-3 rounded border border-gray-800">
                 <p className="font-bold text-yellow-500 mb-1">⚠️ IMPORTANTE</p>
-                <p>Una vez realizada la transferencia, <strong>enviá el comprobante de pago al contacto de Raúl Beyer</strong> para que podamos cargar tu pago y no tengas problemas al ingreso.</p>
+                <p>Transferí el total a ese Alias y <strong>enviá el comprobante de pago al contacto de Raúl Beyer</strong> para que podamos cargar tu pago y asegurar tu lugar.</p>
                 <p className="mt-2 text-xs text-gray-400">Cuando validemos tu pago, esta pantalla mostrará tu código QR de acceso.</p>
               </div>
             </div>
