@@ -4,6 +4,14 @@ import { Guest } from '@/app/actions';
 
 export default function DownloadCsvButton({ guests }: { guests: Guest[] }) {
   const downloadCsv = () => {
+    const formatDate = (dateString?: string) => {
+      if (!dateString) return '-';
+      const d = new Date(dateString);
+      return d.toLocaleDateString('es-AR', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      });
+    };
+
     const headers = ['ID', 'Nombre', 'Estado Pago', 'Uso', 'Cantidad Entradas', 'Fecha Generacion', 'Fecha Pago'];
     const rows = guests.map(g => [
       g.id,
@@ -11,8 +19,8 @@ export default function DownloadCsvButton({ guests }: { guests: Guest[] }) {
       g.payment_status === 'paid' ? 'Pagado' : 'Pendiente',
       g.used_status === 1 ? 'Ya ingresó' : 'No usada',
       g.guests_count,
-      `"${g.created_at || '-'}"`,
-      `"${g.paid_at || '-'}"`
+      `"${formatDate(g.created_at)}"`,
+      `"${formatDate(g.paid_at)}"`
     ]);
 
     const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
