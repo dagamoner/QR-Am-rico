@@ -46,6 +46,14 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
               </p>
             )}
           </div>
+          
+          <div className="mb-8 p-4 bg-[#111] rounded-xl border border-yellow-700/30 text-center">
+            <p className="text-gray-400 text-sm mb-1 uppercase tracking-wider">Entradas Válidas</p>
+            <p className="text-3xl font-bold text-white">
+              {guest.guests_count > 0 && <span className="block">{guest.guests_count} Mayor(es)</span>}
+              {guest.kids_count > 0 && <span className="block text-xl text-yellow-500 mt-1">{guest.kids_count} Menor(es)</span>}
+            </p>
+          </div>
 
           <div className="bg-[#1a1a1a] rounded-lg p-5 mb-6 border border-yellow-700/20 text-sm text-gray-300 space-y-4">
             <div className="flex items-start gap-3">
@@ -76,24 +84,19 @@ export default async function TicketPage(props: { params: Promise<{ id: string }
               </div>
             </div>
             
-            <div className="flex items-start gap-3">
-              <span className="text-yellow-500 text-lg">🎟️</span>
-              <div>
-                <p className="font-bold text-yellow-500">ENTRADAS</p>
-                <p>{guest.guests_count} persona/s</p>
-              </div>
-            </div>
           </div>
 
           {guest.payment_status === 'pending' && (
             <div className="bg-gradient-to-r from-yellow-900/20 to-yellow-900/10 border border-yellow-700/50 rounded-lg p-5 mb-6 text-center">
               <h3 className="font-bold text-yellow-500 mb-3 uppercase tracking-wider text-sm">Datos para el pago</h3>
               <p className="text-gray-300 mb-1">
-                Valor por persona: <strong className="text-white">$55.000 ARS</strong>
+                Mayores: <strong className="text-white">$55.000 ARS</strong>
+                <br/>
+                Menores: <strong className="text-white">$30.000 ARS</strong>
               </p>
-              <p className="text-gray-300 mb-4">
-                Total a transferir: <strong className="text-white text-lg">${(55000 * guest.guests_count).toLocaleString('es-AR')} ARS</strong>
-              </p>
+              <div className="text-2xl text-yellow-400 font-bold mb-4 bg-black/30 py-2 rounded">
+                Total a pagar: ${(guest.guests_count * 55000 + guest.kids_count * 30000).toLocaleString('es-AR')}
+              </div>
               
               <div className="bg-[#222] p-3 rounded-lg border border-gray-700 text-lg font-mono font-bold tracking-wider mb-4 text-white cursor-auto select-all shadow-inner">
                 Americo.gallardo

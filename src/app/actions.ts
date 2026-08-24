@@ -10,6 +10,7 @@ export type Guest = {
   payment_status: 'pending' | 'paid';
   used_status: number;
   guests_count: number;
+  kids_count: number;
   created_at: string;
   paid_at?: string;
   phone?: string;
@@ -31,6 +32,8 @@ async function ensureTableExists() {
   await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS paid_at TIMESTAMP WITH TIME ZONE;`;
   // Add phone column if it doesn't exist
   await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS phone VARCHAR(50);`;
+  // Add kids_count column if it doesn't exist
+  await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS kids_count INTEGER NOT NULL DEFAULT 0;`;
 }
 
 export async function getGuests(): Promise<Guest[]> {
@@ -44,12 +47,12 @@ export async function getGuests(): Promise<Guest[]> {
   }
 }
 
-export async function addGuest(name: string, guestsCount: number = 1, phone: string = '') {
+export async function addGuest(name: string, guestsCount: number = 1, phone: string = '', kidsCount: number = 0) {
   try {
     const id = crypto.randomUUID().substring(0, 8); // Short ID for simpler QR
     await sql`
-      INSERT INTO guests (id, name, payment_status, used_status, guests_count, phone)
-      VALUES (${id}, ${name}, 'pending', 0, ${guestsCount}, ${phone})
+      INSERT INTO guests (id, name, payment_status, used_status, guests_count, phone, kids_count)
+      VALUES (${id}, ${name}, 'pending', 0, ${guestsCount}, ${phone}, ${kidsCount})
     `;
     revalidatePath('/admin');
     return id;

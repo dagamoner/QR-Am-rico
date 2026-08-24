@@ -12,7 +12,7 @@ export default function DownloadCsvButton({ guests }: { guests: Guest[] }) {
       });
     };
 
-    const headers = ['ID', 'Nombre', 'Celular', 'Estado Pago', 'Uso', 'Cantidad Entradas', 'Fecha Generacion', 'Fecha Pago'];
+    const headers = ['ID', 'Nombre', 'Celular', 'Estado Pago', 'Uso', 'Mayores', 'Menores', 'Monto Total', 'Fecha Generacion', 'Fecha Pago'];
     const rows = guests.map(g => [
       g.id,
       `"${g.name}"`, // Quote name to avoid issues with commas
@@ -20,6 +20,8 @@ export default function DownloadCsvButton({ guests }: { guests: Guest[] }) {
       g.payment_status === 'paid' ? 'Pagado' : 'Pendiente',
       g.used_status === 1 ? 'Ya ingresó' : 'No usada',
       g.guests_count,
+      g.kids_count,
+      (g.guests_count * 55000) + (g.kids_count * 30000),
       `"${formatDate(g.created_at)}"`,
       `"${formatDate(g.paid_at)}"`
     ]);

@@ -17,33 +17,43 @@ export default async function AdminPage() {
         <form action={async (formData) => {
           'use server';
           const name = formData.get('name') as string;
-          const count = parseInt(formData.get('count') as string) || 1;
+          const count = parseInt(formData.get('count') as string) || 0;
+          const kids = parseInt(formData.get('kids') as string) || 0;
           const phone = formData.get('phone') as string || '';
-          if (name && phone) await addGuest(name, count, phone);
-        }} className="flex flex-col md:flex-row gap-4">
+          if (name && phone && (count > 0 || kids > 0)) await addGuest(name, count, phone, kids);
+        }} className="flex flex-col md:flex-row gap-4 flex-wrap">
           <input
             type="text"
             name="name"
             placeholder="Nombre completo"
             required
-            className="border p-2 rounded flex-1"
+            className="border p-2 rounded flex-1 min-w-[200px]"
           />
           <input
             type="tel"
             name="phone"
             placeholder="Celular (ej: 261...)"
             required
-            className="border p-2 rounded flex-1"
+            className="border p-2 rounded flex-1 min-w-[200px]"
           />
-          <input
-            type="number"
-            name="count"
-            defaultValue="1"
-            min="1"
-            required
-            placeholder="Cant. Entradas"
-            className="border p-2 rounded w-32"
-          />
+          <div className="flex gap-2">
+            <input
+              type="number"
+              name="count"
+              defaultValue="1"
+              min="0"
+              placeholder="Mayores"
+              className="border p-2 rounded w-24"
+            />
+            <input
+              type="number"
+              name="kids"
+              defaultValue="0"
+              min="0"
+              placeholder="Menores"
+              className="border p-2 rounded w-24"
+            />
+          </div>
           <button type="submit" className="bg-black text-white px-6 py-2 rounded font-medium hover:bg-gray-800 transition">
             Agregar
           </button>
@@ -64,7 +74,7 @@ export default async function AdminPage() {
             <div key={guest.id} className="flex flex-col md:flex-row justify-between items-center p-4 border rounded bg-gray-50 gap-4">
               <div className="flex-1">
                 <p className="font-bold text-lg">{guest.name}</p>
-                <p className="text-sm text-gray-500">ID: {guest.id} • Entradas: {guest.guests_count}</p>
+                <p className="text-sm text-gray-500">ID: {guest.id} • Entradas: {guest.guests_count} Mayores, {guest.kids_count} Menores</p>
                 {guest.phone && <p className="text-sm font-medium text-green-700">📱 {guest.phone}</p>}
                 <p className="mt-2">
                   Pago: 

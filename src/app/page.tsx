@@ -83,9 +83,10 @@ export default function Home() {
               'use server';
               const name = formData.get('name') as string;
               const count = parseInt(formData.get('count') as string) || 1;
+              const kids = parseInt(formData.get('kids') as string) || 0;
               const phone = formData.get('phone') as string || '';
               if (name && phone) {
-                const id = await addGuest(name, count, phone);
+                const id = await addGuest(name, count, phone, kids);
                 if (id) {
                   redirect(`/ticket/${id}`);
                 }
@@ -113,17 +114,31 @@ export default function Home() {
                 />
               </div>
               
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">Cantidad de Entradas</label>
-                <select 
-                  name="count"
-                  className="w-full bg-[#222] border border-gray-700 text-white p-3 rounded-lg focus:outline-none focus:border-yellow-500 transition"
-                  defaultValue="1"
-                >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
-                    <option key={num} value={num}>{num} {num === 1 ? 'persona' : 'personas'}</option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Entradas Mayores</label>
+                  <select 
+                    name="count"
+                    className="w-full bg-[#222] border border-gray-700 text-white p-3 rounded-lg focus:outline-none focus:border-yellow-500 transition"
+                    defaultValue="1"
+                  >
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+                      <option key={num} value={num}>{num}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Entradas Menores</label>
+                  <select 
+                    name="kids"
+                    className="w-full bg-[#222] border border-gray-700 text-white p-3 rounded-lg focus:outline-none focus:border-yellow-500 transition"
+                    defaultValue="0"
+                  >
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+                      <option key={num} value={num}>{num}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               
               <button type="submit" className="w-full bg-gradient-to-r from-yellow-700 to-yellow-600 hover:from-yellow-600 hover:to-yellow-500 text-white py-3 rounded-lg font-bold transition shadow-lg mt-2">

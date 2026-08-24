@@ -8,6 +8,7 @@ export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
   const downloadPdf = () => {
     const doc = new jsPDF();
     const TICKET_PRICE = 55000;
+    const KID_PRICE = 30000;
 
     const generateTableAndTotals = (startY: number) => {
       const sortedGuests = [...guests].sort((a, b) => a.name.localeCompare(b.name));
@@ -21,9 +22,9 @@ export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
       };
 
       // Table Data
-      const headers = [['Nombre', 'Celular', 'Generado', 'Pagado el', 'Cant.', 'Estado', 'Debe', 'Pagado']];
+      const headers = [['Nombre', 'Celular', 'Generado', 'Pagado el', 'May.', 'Men.', 'Estado', 'Debe', 'Pagado']];
       const data = sortedGuests.map(g => {
-        const total = g.guests_count * TICKET_PRICE;
+        const total = (g.guests_count * TICKET_PRICE) + (g.kids_count * KID_PRICE);
         const isPaid = g.payment_status === 'paid';
         const pagado = isPaid ? total : 0;
         const debe = isPaid ? 0 : total;
@@ -34,6 +35,7 @@ export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
           formatDate(g.created_at),
           formatDate(g.paid_at),
           g.guests_count,
+          g.kids_count,
           isPaid ? 'Pagado' : 'Pendiente',
           `$${debe.toLocaleString('es-AR')}`,
           `$${pagado.toLocaleString('es-AR')}`
@@ -51,24 +53,27 @@ export default function DownloadPdfButton({ guests }: { guests: Guest[] }) {
       });
 
       // Calculate totals
-      const totalGuests = sortedGuests.reduce((acc, g) => acc + g.guests_count, 0);
-      const totalPaidTickets = sortedGuests.filter(g => g.payment_status === 'paid').reduce((acc, g) => acc + g.guests_count, 0);
-      const totalFacturado = totalGuests * TICKET_PRICE;
-      const totalCobrado = totalPaidTickets * TICKET_PRICE;
-      const totalDebe = totalFacturado - totalCobrado;
+      const totalMayores = sortedGuests.reduce((sum, g) => sum + g.guests_count, 0);
+      const totalMenores = sortedGuests.reduce((sum, g) => sum + g.kids_count, 0);
+      const totalIngresos = sortedGuests.reduce((sum, g) => {
+        return sum + (g.payment_status === 'paid' ? (g.guests_count * TICKET_PRICE) + (g.kids_count * KID_PRICE) : 0);
+      }, 0);
+      const totalDeuda = sortedGuests.reduce((sum, g) => {
+        return sum + (g.payment_status === 'pending' ? (g.guests_count * TICKET_PRICE) + (g.kids_count * KID_PRICE) : 0);
+      }, 0);
       
       const finalY = (doc as any).lastAutoTable.finalY + 10;
       doc.setFontSize(11);
       
       // Entradas
-      doc.text(`Total Entradas Emitidas: ${totalGuests}`, 14, finalY);
-      doc.text(`Total Entradas Pagadas: ${totalPaidTickets}`, 14, finalY + 7);
-      doc.text(`Entradas Pendientes: ${totalGuests - totalPaidTickets}`, 14, finalY + 14);
+      doc.text(`Total Entradas: ${totalMayores} Mayores, ${totalMenores} Menores`, 14, finalY);
+      doc.text(`Total Pagadas: ${sortedGuests.filter(g => g.payment_status === 'paid').reduce((sum, g) => sum + g.guests_count + g.kids_count, 0)}`, 14, finalY + 7);
+      doc.text(`Entradas Pendientes: ${sortedGuests.filter(g => g.payment_status === 'pending').reduce((sum, g) => sum + g.guests_count + g.kids_count, 0)}`, 14, finalY + 14);
 
       // Dinero
-      doc.text(`Total Emitido: $${totalFacturado.toLocaleString('es-AR')}`, 120, finalY);
-      doc.text(`Total Cobrado: $${totalCobrado.toLocaleString('es-AR')}`, 120, finalY + 7);
-      doc.text(`Falta Cobrar: $${totalDebe.toLocaleString('es-AR')}`, 120, finalY + 14);
+      doc.text(`Total Emitido: $${(totalIngresos + totalDeuda).toLocaleString('es-AR')}`, 120, finalY);
+      doc.text(`Total Cobrado: $${totalIngresos.toLocaleString('es-AR')}`, 120, finalY + 7);
+      doc.text(`Falta Cobrar: $${totalDeuda.toLocaleString('es-AR')}`, 120, finalY + 14);
 
       doc.save('informe_invitados_americo.pdf');
     };
