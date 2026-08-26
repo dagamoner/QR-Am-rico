@@ -17,6 +17,10 @@ export default function WhatsAppNotifyButton({
   const [loading, setLoading] = useState(false);
 
   const handleNotify = async () => {
+    if (!window.confirm(`¿Estás seguro de que deseas APROBAR el pago de ${name} y enviarle su entrada por WhatsApp?`)) {
+      return;
+    }
+
     setLoading(true);
     // 1. Marca como pagado en la base de datos (Server Action)
     await markAsPaid(id);

@@ -3,6 +3,7 @@ import DownloadCsvButton from '@/components/DownloadCsvButton';
 import DownloadPdfButton from '@/components/DownloadPdfButton';
 import WhatsAppNotifyButton from '@/components/WhatsAppNotifyButton';
 import AutoRefresher from '@/components/AutoRefresher';
+import DeleteGuestButton from '@/components/DeleteGuestButton';
 
 export default async function AdminPage() {
   const guests = await getGuests();
@@ -100,14 +101,7 @@ export default async function AdminPage() {
                   />
                 )}
                 
-                <form action={async () => {
-                  'use server';
-                  await deleteGuest(guest.id);
-                }}>
-                  <button type="submit" className="w-full bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded font-medium text-sm transition">
-                    Eliminar
-                  </button>
-                </form>
+                <DeleteGuestButton id={guest.id} name={guest.name} />
               </div>
             </div>
           ))}
