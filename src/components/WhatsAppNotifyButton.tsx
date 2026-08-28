@@ -20,6 +20,11 @@ export default function WhatsAppNotifyButton({
     if (!window.confirm(`¿Estás seguro de que deseas APROBAR el pago de ${name} y enviarle su entrada por WhatsApp?`)) {
       return;
     }
+    
+    // Segunda confirmación
+    if (!window.confirm(`⚠️ DOBLE CHECK ⚠️\n\n¿Confirmás que recibiste el dinero de ${name}? Una vez aprobado, se generará el ticket oficial.`)) {
+      return;
+    }
 
     setLoading(true);
     // 1. Marca como pagado en la base de datos (Server Action)
